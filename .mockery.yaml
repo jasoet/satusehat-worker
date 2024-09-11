@@ -1,0 +1,8 @@
+with-expecter: false
+dir: "{{.InterfaceDirRelative}}/mocks"
+filename: "mock_{{ .InterfaceName | snakecase }}.go"
+packages:
+  github.com/jasoet/fhir-worker/worker:
+    interfaces:
+      DatabaseOperations:
+      SatusehatClient:

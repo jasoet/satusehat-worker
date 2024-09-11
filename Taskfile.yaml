@@ -1,0 +1,58 @@
+version: '3'
+
+vars:
+  APP_NAME: fhir-worker
+  PACKAGE: github.com/jasoet/fhir-worker
+  COVERAGE_DIR: ./_output/coverage
+  VERSION:
+    sh: cat VERSION
+  CURRENT_DIR:
+    sh: pwd
+
+tasks:
+  mkdir:
+    desc: Create required directory
+    cmds:
+      - mkdir -p {{.COVERAGE_DIR}}
+    status:
+      - test -p {{.COVERAGE_DIR}}
+    silent: true
+
+  vendor:
+    desc: Run Go vendor
+    cmds:
+      - go mod tidy
+      - go mod vendor
+    silent: true
+
+  install-dev:
+    desc: Install development tools
+    cmds:
+      - go install github.com/goreleaser/goreleaser@latest
+      - go install github.com/vektra/mockery/v2@v2.42.2
+    silent: true
+
+  gen:
+    desc: execute generator
+    deps: [ mkdir,vendor,install-dev ]
+    cmd: mockery
+
+  build-snapshot:
+    desc: Build snapshot
+    deps: [ mkdir,vendor ]
+    cmds:
+      - goreleaser --snapshot --clean
+
+  run:
+    desc: Run main.go
+    deps: [ mkdir,vendor ]
+    cmds:
+      - go run --tags sleman main.go {{.CLI_ARGS}}
+    silent: true
+
+  test:
+    desc: Run test
+    deps: [ mkdir,vendor ]
+    cmds:
+      - go test --tags sleman -v -race -coverprofile={{.COVERAGE_DIR}}/coverage.out -covermode=atomic ./...
+      - go tool cover -html={{.COVERAGE_DIR}}/coverage.out -o {{.COVERAGE_DIR}}/coverage.html

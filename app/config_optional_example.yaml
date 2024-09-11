@@ -1,0 +1,26 @@
+port: 8000 # Http Port for Metrics
+job: # [Mandatory]
+  publish_interval: 30s  # Interval for publishing data to SatuSehat
+  visit_fetch_interval: 1s # Interval for fetching visit data
+  visit_fill_interval: 1s # Internal for fill other resource data based on visit id
+  mark_complete_interval: 1s # Interval to check visit data and mark it complete if met certain condition
+database:
+  simrs: # Database connection for SIMRS
+    db_type: "MYSQL" # Supported Type: MSSQL, POSTGRES, MYSQL
+    host: "localhost"
+    port: 3306
+    username: "jasoet"
+    password: "localhost"
+    db_name: "satusehat"
+    timeout: 3s
+    max_idle_conns: 5
+    max_open_conns: 10
+satusehat:
+  convert_to_utc: true # Automatically convert date to UTC
+  organization_id: "organization_id_sample" # Hospital SatuSehat organization id
+  satusehat:
+    auth_url: "https://example.com"
+    base_url: "https://example.com"
+    token_req_path: "/path/to/token"
+    client_id: "client_id"
+    client_secret: "client_secret"

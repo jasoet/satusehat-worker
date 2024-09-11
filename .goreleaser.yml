@@ -1,0 +1,47 @@
+before:
+  hooks:
+    - go mod tidy
+    - go mod vendor
+builds:
+  - id: fhir-worker-sahabat
+    main: ./main.go
+    binary: ./fhir-worker-sahabat
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+  - id: fhir-worker-sleman
+    main: ./main.go
+    binary: ./fhir-worker-sleman
+    tags:
+      - sleman
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+checksum:
+  name_template: 'checksums.txt'
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+archives:
+  - name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
+    format: zip
+    files:
+      - src: app/config_example.yaml
+        dst: .config.yaml
+      - README.md
+      - app/config_example.yaml

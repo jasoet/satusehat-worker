@@ -1,0 +1,49 @@
+port: 8000 # Http Port for Metrics
+job: # [Mandatory]
+  publish_interval: 30s  # Interval for publishing data to SatuSehat
+  visit_fetch_interval: 10s # Interval for fetching visit data
+  visit_fill_interval: 10s # Internal for fill other resource data based on visit id
+  mark_complete_interval: 10s # Interval to check visit data and mark it complete if met certain condition
+  publish_disabled: false # [Optional] default false
+  visit_fetch_disabled: false # [Optional] default false
+  visit_fill_disabled: false # [Optional] default false
+  mark_complete_disabled: false # [Optional] default false
+mapping: # [Optional]
+  mark_complete_days: 7 # Days until visit data are marked as complete
+  last_visit_days: 7 # Fetch Visit data for $n days
+  disable_diagnosis: false # [Optional] default false
+  disable_lab: false # [Optional] default false
+  disable_radiology: false # [Optional] default false
+  disable_procedure: false # [Optional] default false
+  disable_medication: false # [Optional] default false
+publish: # [Optional]
+  simulation_mode: true # Publish function will only write FHIR json to file
+  simulation_dir: sim_output # Directory to store FHIR Json file in simulation mode
+  publish_delay: 2s # Delay duration for each data publish to SatuSehat
+database: # Uses SQLite as internal database
+  path: "internal.db" # optional, defaults: {HOME_DIR}/internal.db
+  paths: [ "/","jasoet","internal.db" ] # optional, will be ignored if path is set
+  simrs: # Database connection for SIMRS
+    db_type: "MYSQL" # Supported Type: MSSQL, POSTGRES, MYSQL
+    host: "localhost"
+    port: 3306
+    username: "jasoet"
+    password: "localhost"
+    db_name: "satusehat"
+    timeout: 3s
+    max_idle_conns: 5
+    max_open_conns: 10
+satusehat:
+  convert_to_utc: true # Automatically convert date to UTC
+  organization_id: "organization_id_sample" # Hospital SatuSehat organization id
+  satusehat:
+    auth_url: "https://example.com"
+    base_url: "https://example.com"
+    token_req_path: "/path/to/token"
+    client_id: "client_id"
+    client_secret: "client_secret"
+  http_client: # [Optional]
+    retry_count: 3
+    retry_wait_time: 1s
+    retry_max_wait_time: 30s
+    timeout: 3s
